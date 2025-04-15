@@ -18,24 +18,25 @@ class JwtService(
     private val accessTokenValidityMs = 15L * 60L * 1000L // 15 minutes
     val refreshTokenValidityMs = 30L * 24L * 60L * 60L * 1000L // 30 days
 
-    private fun generateToken(userId: String, type: String, validityMs: Long): String {
+    private fun generateToken(userId: String, roles: Set<String>, type: String, validityMs: Long): String {
         val now = Date()
         val expiry = Date(now.time + validityMs)
 
         return Jwts.builder()
             .subject(userId)
             .claim("type", type)
+            .claim("roles", roles)
             .issuedAt(now)
             .expiration(expiry)
             .signWith(secretKey, Jwts.SIG.HS256)
             .compact()
     }
 
-    fun generateAccessToken(userId: String): String =
-        generateToken(userId, "access", accessTokenValidityMs)
+    fun generateAccessToken(userId: String, roles: Set<String>): String =
+        generateToken(userId, roles, "access", accessTokenValidityMs)
 
-    fun generateRefreshToken(userId: String): String =
-        generateToken(userId, "refresh", refreshTokenValidityMs)
+    fun generateRefreshToken(userId: String, roles: Set<String>): String =
+        generateToken(userId, roles, "refresh", refreshTokenValidityMs)
 
     fun validateAccessToken(token: String): Boolean =
         getTokenType(token) == "access"
@@ -47,6 +48,16 @@ class JwtService(
         val claims = parseAllClaims(token)
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token")
         return claims.subject
+    }
+
+    fun getRolesFromToken(token: String): List<String>? {
+        val claims = parseAllClaims(token) ?: return null
+        val rawRoles = claims["roles"]
+        println("Raw roles from token: $rawRoles")
+        return when (rawRoles) {
+            is List<*> -> rawRoles.filterIsInstance<String>()
+            else -> null
+        }
     }
 
     private fun getTokenType(token: String): String? {

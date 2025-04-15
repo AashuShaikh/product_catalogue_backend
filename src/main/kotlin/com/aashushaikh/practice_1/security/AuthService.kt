@@ -27,7 +27,7 @@ class AuthService(
         val refreshToken: String
     )
 
-    fun register(email: String, password: String): User {
+    fun register(email: String, password: String, roles: Set<String>): User {
         val user = userRepository.findByEmail(email)
         if(user != null){
             throw ResponseStatusException(HttpStatus.CONFLICT)
@@ -35,7 +35,8 @@ class AuthService(
         return userRepository.save(
             User(
                 email = email,
-                hashedPassword = hashEncoder.encode(password)
+                hashedPassword = hashEncoder.encode(password),
+                roles = roles
             )
         )
     }
@@ -46,8 +47,8 @@ class AuthService(
             throw BadCredentialsException("Invalid Credentials")
         }
 
-        val newAccessToken = jwtService.generateAccessToken(user.id!!)
-        val newRefreshToken = jwtService.generateRefreshToken(user.id!!)
+        val newAccessToken = jwtService.generateAccessToken(user.id!!, user.roles)
+        val newRefreshToken = jwtService.generateRefreshToken(user.id!!, user.roles)
 
         storeRefreshToken(user.id!!, newRefreshToken)
 
@@ -74,8 +75,8 @@ class AuthService(
 
         refreshTokenRepository.deleteByUserIdAndHashedToken(user.id, hashedToken)
 
-        val newAccessToken = jwtService.generateAccessToken(user.id)
-        val newRefreshToken = jwtService.generateRefreshToken(user.id)
+        val newAccessToken = jwtService.generateAccessToken(user.id, user.roles)
+        val newRefreshToken = jwtService.generateRefreshToken(user.id, user.roles)
 
         storeRefreshToken(user.id, newRefreshToken)
 

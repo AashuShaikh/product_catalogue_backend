@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -62,6 +63,7 @@ class ProductController(
         return ResponseEntity.ok(body)
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun saveProduct(
         @Valid @RequestBody body: ProductRequest
@@ -123,6 +125,7 @@ class ProductController(
         return ResponseEntity.ok(products)
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     fun updateProduct(
         @PathVariable id: String,
@@ -139,6 +142,7 @@ class ProductController(
         return ResponseEntity.ok(updated.toProductResponse())
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     fun deleteProduct(
         @PathVariable id: String,
@@ -147,6 +151,7 @@ class ProductController(
         return ResponseEntity.ok(product.toProductResponse())
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{product_id}/tags/{tag_id}")
     fun addTagToProduct(
         @PathVariable product_id: String,
