@@ -14,6 +14,7 @@ It provides a RESTful API for managing products, categories, and tags, and inclu
 - **Authentication**: JWT-based login and registration.
 - **Tech Stack**: Kotlin, Spring Boot, Spring Data JPA, PostgreSQL, Spring Security.
 - **Clean Architecture**: Follows layered architecture with good separation of concerns.
+- **Testing**: Unit and Integration Tests added for Authentication. (*Ongoing Process*)
 
 ---
 
@@ -29,16 +30,22 @@ This project is part of my Spring Boot with Kotlin roadmap. Here's what I focuse
 
 ## Tech Stack
 
-| Layer        | Tech                            |
-|--------------|---------------------------------|
-| Language     | Kotlin                          |
-| Framework    | Spring Boot                     |
-| Security     | Spring Security + JWT           |
-| Database     | PostgreSQL                      |
-| ORM          | Spring Data JPA                 |
-| Build Tool   | Gradle                          |
+| Layer      | Tech                           |
+|------------|--------------------------------|
+| Language   | Kotlin                         |
+| Framework  | Spring Boot                    |
+| Security   | Spring Security + JWT          |
+| Database   | PostgreSQL                     |
+| ORM        | Spring Data JPA                |
+| Build Tool | Gradle                         |
+| Testing    | JUnit5, Mockito & Spring Tests |
 
 ---
+
+## Future Work:
+- Add Test Cases for Remaining Part of the project (*Authentication Done*).
+- Logging and Documenting the endpoints.
+- Asynchronour implementation using Kotlin-Coroutines.
 
 ## Steps to Use it:
 
