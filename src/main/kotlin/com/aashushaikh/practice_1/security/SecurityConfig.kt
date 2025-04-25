@@ -42,7 +42,12 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/auth/**")
+                    .requestMatchers(
+                        "/auth/**",                   // your auth endpoints
+                        "/swagger-ui/**",            // swagger UI
+                        "/v3/api-docs/**",           // OpenAPI spec
+                        "/swagger-ui.html"           // old Swagger redirect
+                    )
                     .permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR, DispatcherType.FORWARD

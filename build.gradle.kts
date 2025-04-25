@@ -36,6 +36,14 @@ dependencies {
 
 	//JWT
 	implementation("io.jsonwebtoken:jjwt:0.12.6")
+
+	//Documentation using springdoc-openapi
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+
+	//coroutines
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 }
 
 kotlin {

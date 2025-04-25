@@ -4,6 +4,8 @@ import com.aashushaikh.practice_1.database.models.RefreshToken
 import com.aashushaikh.practice_1.database.models.User
 import com.aashushaikh.practice_1.database.repositories.RefreshTokenRepository
 import com.aashushaikh.practice_1.database.repositories.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.security.authentication.BadCredentialsException
@@ -41,16 +43,24 @@ class AuthService(
         )
     }
 
-    fun login(email: String, password: String): TokenPair{
-        val user = userRepository.findByEmail(email) ?: throw BadCredentialsException("Invalid Credentials")
+    suspend fun login(email: String, password: String): TokenPair{
+        println("🟢 Service Entry Thread: ${Thread.currentThread().name}")
+        val user = withContext(Dispatchers.IO) {
+            println("🟡 Inside Dispatchers.IO block: ${Thread.currentThread().name}")
+            userRepository.findByEmail(email) ?: throw BadCredentialsException("Invalid credentials")
+        }
         if(!hashEncoder.matches(password, user.hashedPassword)){ //doesn't match
             throw BadCredentialsException("Invalid Credentials")
         }
 
+        println("🔴 After IO block: ${Thread.currentThread().name}")
+
         val newAccessToken = jwtService.generateAccessToken(user.id!!, user.roles)
         val newRefreshToken = jwtService.generateRefreshToken(user.id!!, user.roles)
 
-        storeRefreshToken(user.id!!, newRefreshToken)
+        withContext(Dispatchers.IO){
+            storeRefreshToken(user.id!!, newRefreshToken)
+        }
 
         return TokenPair(
             accessToken = newAccessToken,
